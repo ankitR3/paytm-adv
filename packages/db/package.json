@@ -1,16 +1,15 @@
 {
   "name": "@repo/db",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "dev": "tsc -b && node dist/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "private": true,
+  "exports": {
+    "./client": "./index.ts"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
+  "typesVersions": {
+    "*": {
+      "client": ["./index.ts"]
+    }
+  },
   "devDependencies": {
     "@types/node": "^24.10.1",
     "dotenv": "^17.2.3",
@@ -18,8 +17,5 @@
   },
   "dependencies": {
     "@prisma/client": "^7.0.1"
-  },
-  "exports": {
-    ".": "./src/index.ts"
   }
 }

@@ -1,9 +1,13 @@
-import Image from "next/image";
+"use client"
 
-export default function Home() {
+import { signIn, signOut, useSession } from "next-auth/react";
+import { Appbar } from "@/src/ui/AppBar";
+
+export default function Page() {
+  const session = useSession();
   return (
-    <div className="text-2xl">
-      hi
+    <div>
+      <Appbar onSignin={signIn} onSignout={signOut} user={session.data?.user} />
     </div>
   );
 }

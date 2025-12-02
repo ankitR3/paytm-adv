@@ -29,6 +29,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
-  ],
+, "../../packages/ui/src/code.tsx", "../../packages/ui/src/card.tsx", "../../packages/ui/src/button.tsx", "../../packages/ui/src/AppBar.tsx"  ],
   "exclude": ["node_modules"]
 }

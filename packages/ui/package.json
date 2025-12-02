@@ -3,7 +3,18 @@
   "version": "0.0.0",
   "private": true,
   "exports": {
-    "./*": "./src/*.tsx"
+    "./button": "./src/button.tsx",
+    "./card": "./src/card.tsx",
+    "./code": "./src/code.tsx",
+    "./appbar": "./src/Appbar.tsx"
+  },
+  "typesVersions": {
+    "*": {
+      "button": ["./src/button.tsx"],
+      "card": ["./src/card.tsx"],
+      "code": ["./src/code.tsx"],
+      "appbar": ["./src/Appbar.tsx"]
+    }
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
