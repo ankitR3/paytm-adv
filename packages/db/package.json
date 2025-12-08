@@ -1,21 +1,13 @@
 {
-  "name": "@repo/db",
-  "version": "1.0.0",
-  "private": true,
-  "exports": {
-    "./client": "./index.ts"
-  },
-  "typesVersions": {
-    "*": {
-      "client": ["./index.ts"]
+    "name": "@repo/db",
+    "version": "0.0.0",
+    "dependencies": {
+        "@prisma/client": "^5.11.0"
+    },
+    "devDependencies": {
+        "prisma": "5.11.0"
+    },
+    "exports": {
+        "./client": "./index.ts"
     }
-  },
-  "devDependencies": {
-    "@types/node": "^24.10.1",
-    "dotenv": "^17.2.3",
-    "prisma": "^7.0.1"
-  },
-  "dependencies": {
-    "@prisma/client": "^7.0.1"
-  }
 }
