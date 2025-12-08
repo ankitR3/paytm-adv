@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import db from "@repo/db/client";
 
 const app = express();
+app.use(express.json())
 
 app.post("/hdfcWebhook", async (req: Request, res: Response) => {
     const paymentInformation: {
@@ -13,9 +14,10 @@ app.post("/hdfcWebhook", async (req: Request, res: Response) => {
         userId: req.body.user_identifier,
         amount: req.body.amount
     };
+
     try {
         await db.$transaction([
-            db.balance.update({
+            db.balance.updateMany({
                 where: {
                     userId: Number(paymentInformation.userId)
                 },
