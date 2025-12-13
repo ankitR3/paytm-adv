@@ -1,45 +1,78 @@
 import express, { Request, Response } from "express";
 import db from "@repo/db/client";
+import { hdfcWebhookSchema } from "./zod/hdfcWebhookSchema";
 
 const app = express();
 app.use(express.json())
 
 app.post("/hdfcWebhook", async (req: Request, res: Response) => {
-    // console.log("Webhook received:", req.body);
+    // TODO: Add zod validation here? -> done
+    // TODO: HDFC bank should ideally send us a secret so we know this is sent by them
+    // TODO: Check if this onRampTxn is processing or not -> done
 
-    const paymentInformation: {
-        token: string;
-        userId: string;
-        amount: string;
-    } = {
-        token: req.body.token,
-        userId: req.body.user_identifier,
-        amount: req.body.amount
-    };
+    // console.log("Webhook received:", req.body);
+    const parsed = hdfcWebhookSchema.safeParse(req.body);
+
+    if (!parsed.success) {
+        return res.status(400).json({
+            message: "Invalid request body"
+        });
+    }
 
     // console.log("Processing payment:", paymentInformation);
+    const { token, user_identifier, amount} = parsed.data;
+    const userId = Number(user_identifier);
+    const amountNum = Number(amount)
 
     try {
-        const result = await db.$transaction([
+        const transaction = await db.onRampTransaction.findUnique({
+            where: { token }
+        });
+
+        if (!transaction) {
+            return res.status(400).json({
+                message: "Invalid token"
+            });
+        }
+
+        if (transaction.userId !== userId) {
+            return res.status(400).json({
+                message: "User mismatch"
+            });
+        }
+
+        if (transaction.amount !== amountNum) {
+            return res.status(400).json({
+                message: "Amount mismatch"
+            });
+        }
+
+        if (transaction.status !== "Processing") {
+            return res.status(200).json({
+                message: "Already Processed or not processing"
+            });
+        }
+
+        await db.$transaction([
             db.balance.upsert({
                 where: {
-                    userId: Number(paymentInformation.userId)
+                    userId
                 },
                 update: {
                     amount: {
-                        increment: Number(paymentInformation.amount)
+                        increment: amountNum
                     }
                 },
                 create: {
-                    userId: Number(paymentInformation.userId),
-                    amount: Number(paymentInformation.amount),
+                    userId,
+                    amount: amountNum,
                     locked: 0
                 }
             }),
 
             db.onRampTransaction.update({
                 where: {
-                    token: paymentInformation.token,
+                    token
                 },
                 data: {
                     status: "Success"
@@ -54,10 +87,10 @@ app.post("/hdfcWebhook", async (req: Request, res: Response) => {
         })
     } catch (err) {
         console.error("Webhook error:", err);
-        res.status(411).json({
+        res.status(500).json({
             message: "Error while processing webhook"
-        })
+        });
     }
-})
+});
 
 app.listen(3003);
