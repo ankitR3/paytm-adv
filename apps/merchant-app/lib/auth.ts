@@ -1,7 +1,8 @@
 import GoogleProvider from "next-auth/providers/google";
+import type { NextAuthOptions } from "next-auth";
 import db from "@repo/db/client";
 
-export const authOptions = {
+export const authOptions: NextAuthOptions = {
     providers: [
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID || "",
@@ -9,17 +10,8 @@ export const authOptions = {
         })
     ],
     callbacks: {
-      async signIn({ user, account }: {
-        user: {
-          email: string;
-          name: string
-        },
-        account: {
-          provider: "google" | "github"
-        }
-      }) {
-        console.log("hi signin")
-        if (!user || !user.email) {
+      async signIn({ user, account }) {
+        if (!user?.email || !account?.provider) {
           return false;
         }
 
@@ -32,17 +24,18 @@ export const authOptions = {
           },
           create: {
             email: user.email,
-            name: user.name,
-            auth_type: account.provider === "google" ? "Google" : "Github" // Use a prisma type here
+            name: user.name ?? "",
+            auth_type: account.provider === "google" ? "Google" : "Github"
           },
           update: {
-            name: user.name,
-            auth_type: account.provider === "google" ? "Google" : "Github" // Use a prisma type here
+            name: user.name ?? "",
+            auth_type: account.provider === "google" ? "Google" : "Github"
           }
         });
 
         return true;
       }
     },
-    secret: process.env.NEXTAUTH_SECRET || "secret"
-  }
+
+  secret: process.env.NEXTAUTH_SECRET || "secret"
+}
