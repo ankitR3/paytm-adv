@@ -2,9 +2,9 @@
   "name": "week-18",
   "private": true,
   "scripts": {
-    "build": "npx turbo build",
-    "dev": "npx turbo dev",
-    "lint": "npx turbo lint",
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "db:generate": "cd packages/db && npx prisma generate && cd ../.."
   },
@@ -12,7 +12,7 @@
     "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",
     "prettier": "^3.2.5",
-    "turbo": "latest"
+    "turbo": "^2.0.0"
   },
   "engines": {
     "node": ">=18"
